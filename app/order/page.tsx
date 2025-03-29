@@ -245,7 +245,7 @@ export default function OrderPage() {
     name: string;
     price: number;
     options?: { id: string; name: string; default?: boolean }[];
-    selectedOption?: string;
+    selectedOption?: string; // ✅ Ensure selectedOption is included
   }) => {
     // If item has options, use the default option or the first one
     let selectedOption = undefined;
@@ -557,20 +557,12 @@ export default function OrderPage() {
                                           } else {
                                             // Add to cart with this option
                                             addToCart({
-                                              ...item,
+                                              id: item.id,
+                                              name: item.name,
+                                              price: item.price,
                                               options: undefined,
                                               selectedOption:
-                                                option?.name ?? "",
-                                            } as {
-                                              id: number;
-                                              name: string;
-                                              price: number;
-                                              options?: {
-                                                id: string;
-                                                name: string;
-                                                default?: boolean;
-                                              }[];
-                                              selectedOption?: string;
+                                                option?.name ?? "", // ✅ Ensure selectedOption is passed correctly
                                             });
                                           }
                                         }}
