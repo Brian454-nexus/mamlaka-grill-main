@@ -1,17 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Badge } from "@/components/ui/badge"
-import { AlertCircle, ArrowLeft, MinusCircle, Phone, PlusCircle, ShoppingCart, Utensils } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import Link from "next/link"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertCircle,
+  ArrowLeft,
+  MinusCircle,
+  Phone,
+  PlusCircle,
+  ShoppingCart,
+  Utensils,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Link from "next/link";
 
 /**
  * Menu Categories and Items
@@ -25,12 +40,42 @@ const menuCategories = [
     id: "fast-food",
     name: "Fast Food",
     items: [
-      { id: 1, name: "Chips (Regular)", price: 150, description: "Crispy potato fries" },
-      { id: 2, name: "Chips Masala", price: 200, description: "Fries with special masala spices" },
-      { id: 3, name: "Hotdog", price: 180, description: "Classic hotdog with toppings" },
-      { id: 4, name: "Burger", price: 250, description: "Beef burger with lettuce, tomato and sauce" },
-      { id: 5, name: "Sausage", price: 100, description: "Grilled beef sausage" },
-      { id: 6, name: "Chips & Sausage", price: 220, description: "Combo of fries and sausage" },
+      {
+        id: 1,
+        name: "Chips (Regular)",
+        price: 150,
+        description: "Crispy potato fries",
+      },
+      {
+        id: 2,
+        name: "Chips Masala",
+        price: 200,
+        description: "Fries with special masala spices",
+      },
+      {
+        id: 3,
+        name: "Hotdog",
+        price: 180,
+        description: "Classic hotdog with toppings",
+      },
+      {
+        id: 4,
+        name: "Burger",
+        price: 250,
+        description: "Beef burger with lettuce, tomato and sauce",
+      },
+      {
+        id: 5,
+        name: "Sausage",
+        price: 100,
+        description: "Grilled beef sausage",
+      },
+      {
+        id: 6,
+        name: "Chips & Sausage",
+        price: 220,
+        description: "Combo of fries and sausage",
+      },
     ],
   },
   {
@@ -140,12 +185,22 @@ const menuCategories = [
         ],
       },
       // Other drinks
-      { id: 17, name: "Water (500ml)", price: 50, description: "Mineral water" },
+      {
+        id: 17,
+        name: "Water (500ml)",
+        price: 50,
+        description: "Mineral water",
+      },
       { id: 18, name: "Tea", price: 70, description: "Kenyan tea with milk" },
-      { id: 19, name: "Coffee", price: 100, description: "Freshly brewed coffee" },
+      {
+        id: 19,
+        name: "Coffee",
+        price: 100,
+        description: "Freshly brewed coffee",
+      },
     ],
   },
-]
+];
 
 /**
  * Order Page Component
@@ -157,19 +212,25 @@ const menuCategories = [
  * - Submitting orders
  */
 export default function OrderPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   // State for customer information
-  const [tableNumber, setTableNumber] = useState("")
-  const [phoneNumber, setPhoneNumber] = useState("")
+  const [tableNumber, setTableNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   // State for shopping cart
   const [cart, setCart] = useState<
-    { id: number; name: string; price: number; quantity: number; selectedOption?: string }[]
-  >([])
+    {
+      id: number;
+      name: string;
+      price: number;
+      quantity: number;
+      selectedOption?: string;
+    }[]
+  >([]);
 
   // State for error messages
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   /**
    * Add an item to the cart
@@ -180,28 +241,33 @@ export default function OrderPage() {
    * @param item - The menu item to add to the cart
    */
   const addToCart = (item: {
-    id: number
-    name: string
-    price: number
-    options?: { id: string; name: string; default?: boolean }[]
+    id: number;
+    name: string;
+    price: number;
+    options?: { id: string; name: string; default?: boolean }[];
+    selectedOption?: string;
   }) => {
     // If item has options, use the default option or the first one
-    let selectedOption = undefined
+    let selectedOption = undefined;
     if (item.options && item.options.length > 0) {
-      const defaultOption = item.options.find((opt) => opt.default) || item.options[0]
-      selectedOption = `${defaultOption.name}`
+      const defaultOption =
+        item.options.find((opt) => opt.default) || item.options[0];
+      selectedOption = `${defaultOption.name}`;
     }
 
     setCart((prevCart) => {
       // For items with options, we need to check if the exact same item with same option exists
       const existingItemIndex = prevCart.findIndex(
-        (cartItem) => cartItem.id === item.id && cartItem.selectedOption === selectedOption,
-      )
+        (cartItem) =>
+          cartItem.id === item.id && cartItem.selectedOption === selectedOption
+      );
 
       if (existingItemIndex >= 0) {
         return prevCart.map((cartItem, index) =>
-          index === existingItemIndex ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem,
-        )
+          index === existingItemIndex
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
       } else {
         return [
           ...prevCart,
@@ -210,10 +276,10 @@ export default function OrderPage() {
             quantity: 1,
             selectedOption,
           },
-        ]
+        ];
       }
-    })
-  }
+    });
+  };
 
   /**
    * Remove an item from the cart
@@ -225,16 +291,18 @@ export default function OrderPage() {
    */
   const removeFromCart = (index: number) => {
     setCart((prevCart) => {
-      const item = prevCart[index]
+      const item = prevCart[index];
       if (item.quantity > 1) {
         return prevCart.map((cartItem, idx) =>
-          idx === index ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem,
-        )
+          idx === index
+            ? { ...cartItem, quantity: cartItem.quantity - 1 }
+            : cartItem
+        );
       } else {
-        return prevCart.filter((_, idx) => idx !== index)
+        return prevCart.filter((_, idx) => idx !== index);
       }
-    })
-  }
+    });
+  };
 
   /**
    * Change the selected option for an item in the cart
@@ -244,9 +312,11 @@ export default function OrderPage() {
    */
   const changeItemOption = (cartIndex: number, newOption: string) => {
     setCart((prevCart) => {
-      return prevCart.map((item, index) => (index === cartIndex ? { ...item, selectedOption: newOption } : item))
-    })
-  }
+      return prevCart.map((item, index) =>
+        index === cartIndex ? { ...item, selectedOption: newOption } : item
+      );
+    });
+  };
 
   /**
    * Calculate the total price of all items in the cart
@@ -254,8 +324,8 @@ export default function OrderPage() {
    * @returns The total price in KSh
    */
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  }
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   /**
    * Validate a Kenyan phone number
@@ -265,9 +335,9 @@ export default function OrderPage() {
    */
   const validatePhoneNumber = (phone: string) => {
     // Basic validation for Kenyan phone numbers
-    const phoneRegex = /^(?:254|\+254|0)?(7[0-9]{8})$/
-    return phoneRegex.test(phone)
-  }
+    const phoneRegex = /^(?:254|\+254|0)?(7[0-9]{8})$/;
+    return phoneRegex.test(phone);
+  };
 
   /**
    * Handle the submission of an order
@@ -279,25 +349,25 @@ export default function OrderPage() {
   const handleSubmitOrder = () => {
     // Validate table number
     if (!tableNumber) {
-      setError("Please enter your table number")
-      return
+      setError("Please enter your table number");
+      return;
     }
 
     // Validate phone number
     if (!phoneNumber) {
-      setError("Please enter your phone number")
-      return
+      setError("Please enter your phone number");
+      return;
     }
 
     if (!validatePhoneNumber(phoneNumber)) {
-      setError("Please enter a valid Kenyan phone number")
-      return
+      setError("Please enter a valid Kenyan phone number");
+      return;
     }
 
     // Validate cart
     if (cart.length === 0) {
-      setError("Your cart is empty. Please add items to your order")
-      return
+      setError("Your cart is empty. Please add items to your order");
+      return;
     }
 
     // Create order object
@@ -308,18 +378,18 @@ export default function OrderPage() {
       total: calculateTotal(),
       orderTime: new Date().toISOString(),
       status: "pending",
-    }
+    };
 
     // Store the order in localStorage for demo purposes
     // In a real app, this would be sent to a database
-    const orders = JSON.parse(localStorage.getItem("orders") || "[]")
-    const orderId = Date.now().toString()
-    orders.push({ id: orderId, ...order })
-    localStorage.setItem("orders", JSON.stringify(orders))
+    const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const orderId = Date.now().toString();
+    orders.push({ id: orderId, ...order });
+    localStorage.setItem("orders", JSON.stringify(orders));
 
     // Redirect to confirmation page
-    router.push(`/order/confirmation?id=${orderId}`)
-  }
+    router.push(`/order/confirmation?id=${orderId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -374,11 +444,21 @@ export default function OrderPage() {
                     type="tel"
                     placeholder="07XX XXX XXX"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPhoneNumber(value);
+                      if (!validatePhoneNumber(value)) {
+                        setError("Invalid phone number format");
+                      } else {
+                        setError("");
+                      }
+                    }}
                     className="pl-10"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">This will be used for payment identification</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  This will be used for payment identification
+                </p>
               </div>
             </div>
 
@@ -386,8 +466,13 @@ export default function OrderPage() {
             <div className="grid md:grid-cols-2 gap-6">
               {/* Menu section */}
               <div>
-                <h3 className="text-lg font-medium mb-3 text-green-800">Menu</h3>
-                <Tabs defaultValue={menuCategories[0].id} className="border rounded-lg p-1 bg-white">
+                <h3 className="text-lg font-medium mb-3 text-green-800">
+                  Menu
+                </h3>
+                <Tabs
+                  defaultValue={menuCategories[0].id}
+                  className="border rounded-lg p-1 bg-white"
+                >
                   {/* Menu category tabs */}
                   <TabsList className="w-full grid grid-cols-2 bg-gray-100 p-1 rounded-md">
                     {menuCategories.map((category) => (
@@ -403,7 +488,11 @@ export default function OrderPage() {
 
                   {/* Menu items by category */}
                   {menuCategories.map((category) => (
-                    <TabsContent key={category.id} value={category.id} className="pt-3">
+                    <TabsContent
+                      key={category.id}
+                      value={category.id}
+                      className="pt-3"
+                    >
                       <ScrollArea className="h-[450px] pr-4">
                         <div className="space-y-3">
                           {category.items.map((item) => (
@@ -412,9 +501,15 @@ export default function OrderPage() {
                               className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-md bg-white hover:border-green-200 hover:bg-green-50 transition-colors"
                             >
                               <div className="flex-1 mb-3 md:mb-0">
-                                <p className="font-medium text-green-900">{item.name}</p>
-                                <p className="text-sm text-gray-500">{item.description}</p>
-                                <p className="text-sm font-medium text-green-800 mt-1">KSh {item.price}</p>
+                                <p className="font-medium text-green-900">
+                                  {item.name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {item.description}
+                                </p>
+                                <p className="text-sm font-medium text-green-800 mt-1">
+                                  KSh {item.price}
+                                </p>
 
                                 {/* Show options if available (e.g., Cold/Warm) */}
                                 {item.options && (
@@ -423,25 +518,50 @@ export default function OrderPage() {
                                       <Badge
                                         key={option.id}
                                         variant="outline"
-                                        className={`cursor-pointer py-2 px-3 text-sm ${option.default ? "bg-green-100 border-green-300" : ""}`}
+                                        className={`cursor-pointer py-2 px-3 text-sm ${
+                                          option.default ||
+                                          cart.some(
+                                            (cartItem) =>
+                                              cartItem.selectedOption ===
+                                              option.name
+                                          )
+                                            ? "bg-green-100 border-green-300"
+                                            : ""
+                                        }`}
                                         onClick={() => {
                                           // Find if this item with any option is in cart
-                                          const existingItems = cart.filter((cartItem) => cartItem.id === item.id)
+                                          const existingItems = cart.filter(
+                                            (cartItem) =>
+                                              cartItem.id === item.id
+                                          );
                                           if (existingItems.length > 0) {
                                             // Update the option for all instances of this item
-                                            existingItems.forEach((_, index) => {
-                                              const cartIndex = cart.findIndex(
-                                                (cartItem) =>
-                                                  cartItem.id === item.id &&
-                                                  cartItem.selectedOption === existingItems[index].selectedOption,
-                                              )
-                                              if (cartIndex >= 0) {
-                                                changeItemOption(cartIndex, option.name)
+                                            existingItems.forEach(
+                                              (_, index) => {
+                                                const cartIndex =
+                                                  cart.findIndex(
+                                                    (cartItem) =>
+                                                      cartItem.id === item.id &&
+                                                      cartItem.selectedOption ===
+                                                        existingItems[index]
+                                                          .selectedOption
+                                                  );
+                                                if (cartIndex >= 0) {
+                                                  changeItemOption(
+                                                    cartIndex,
+                                                    option.name
+                                                  );
+                                                }
                                               }
-                                            })
+                                            );
                                           } else {
                                             // Add to cart with this option
-                                            addToCart({ ...item, options: undefined, selectedOption: option.name })
+                                            addToCart({
+                                              ...item,
+                                              options: undefined,
+                                              selectedOption:
+                                                option?.name ?? "",
+                                            });
                                           }
                                         }}
                                       >
@@ -472,8 +592,12 @@ export default function OrderPage() {
                 <h3 className="text-lg font-medium mb-3 text-green-800 flex items-center">
                   <ShoppingCart className="h-5 w-5 mr-2" /> Your Order
                   {cart.length > 0 && (
-                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 hover:bg-green-200">
-                      {cart.reduce((total, item) => total + item.quantity, 0)} items
+                    <Badge
+                      variant="secondary"
+                      className="ml-2 bg-green-100 text-green-800 hover:bg-green-200"
+                    >
+                      {cart.reduce((total, item) => total + item.quantity, 0)}{" "}
+                      items
                     </Badge>
                   )}
                 </h3>
@@ -485,7 +609,9 @@ export default function OrderPage() {
                       <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-md">
                         <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-gray-400" />
                         <p>Your cart is empty</p>
-                        <p className="text-sm mt-2">Add items from the menu to get started</p>
+                        <p className="text-sm mt-2">
+                          Add items from the menu to get started
+                        </p>
                       </div>
                     ) : (
                       /* Cart items list */
@@ -497,8 +623,14 @@ export default function OrderPage() {
                               className="flex items-center justify-between py-3 border-b"
                             >
                               <div className="flex-1">
-                                <p className="font-medium text-green-900">{item.name}</p>
-                                {item.selectedOption && <p className="text-xs text-gray-600">{item.selectedOption}</p>}
+                                <p className="font-medium text-green-900">
+                                  {item.name}
+                                </p>
+                                {item.selectedOption && (
+                                  <p className="text-xs text-gray-600">
+                                    {item.selectedOption}
+                                  </p>
+                                )}
                                 <p className="text-sm text-gray-500">
                                   KSh {item.price} × {item.quantity}
                                 </p>
@@ -513,7 +645,9 @@ export default function OrderPage() {
                                 >
                                   <MinusCircle className="h-5 w-5 text-red-500" />
                                 </Button>
-                                <span className="w-6 text-center font-medium">{item.quantity}</span>
+                                <span className="w-6 text-center font-medium">
+                                  {item.quantity}
+                                </span>
                                 {/* Increase quantity button */}
                                 <Button
                                   variant="outline"
@@ -521,9 +655,14 @@ export default function OrderPage() {
                                   onClick={() => {
                                     setCart((prevCart) => {
                                       return prevCart.map((cartItem, idx) =>
-                                        idx === index ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem,
-                                      )
-                                    })
+                                        idx === index
+                                          ? {
+                                              ...cartItem,
+                                              quantity: cartItem.quantity + 1,
+                                            }
+                                          : cartItem
+                                      );
+                                    });
                                   }}
                                   className="h-9 w-9 border-gray-200"
                                 >
@@ -540,10 +679,13 @@ export default function OrderPage() {
                     <div className="mt-4 pt-4 border-t">
                       <div className="flex justify-between text-lg font-medium">
                         <span>Total:</span>
-                        <span className="text-green-800">KSh {calculateTotal().toLocaleString()}</span>
+                        <span className="text-green-800">
+                          KSh {calculateTotal().toLocaleString()}
+                        </span>
                       </div>
                       <p className="text-xs text-gray-500 mt-2">
-                        Payment will be processed via M-PESA after your order is served
+                        Payment will be processed via M-PESA after your order is
+                        served
                       </p>
                     </div>
                   </CardContent>
@@ -551,11 +693,19 @@ export default function OrderPage() {
 
                 {/* Payment information */}
                 <div className="mt-6 bg-green-50 p-4 rounded-lg border border-green-100">
-                  <h4 className="font-medium text-green-800 mb-2">Payment Information</h4>
-                  <p className="text-sm text-gray-600 mb-2">Pay via M-PESA using our paybill:</p>
+                  <h4 className="font-medium text-green-800 mb-2">
+                    Payment Information
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Pay via M-PESA using our paybill:
+                  </p>
                   <div className="bg-white p-3 rounded border border-green-200 text-center">
-                    <p className="font-medium text-green-900">Paybill: 123456</p>
-                    <p className="text-sm text-gray-500">Account: Your Table Number</p>
+                    <p className="font-medium text-green-900">
+                      Paybill: 123456
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Account: Your Table Number
+                    </p>
                   </div>
                 </div>
               </div>
@@ -573,6 +723,5 @@ export default function OrderPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
-
