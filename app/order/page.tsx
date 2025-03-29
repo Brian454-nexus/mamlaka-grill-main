@@ -561,6 +561,16 @@ export default function OrderPage() {
                                               options: undefined,
                                               selectedOption:
                                                 option?.name ?? "",
+                                            } as {
+                                              id: number;
+                                              name: string;
+                                              price: number;
+                                              options?: {
+                                                id: string;
+                                                name: string;
+                                                default?: boolean;
+                                              }[];
+                                              selectedOption?: string;
                                             });
                                           }
                                         }}
